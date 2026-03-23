@@ -1,3 +1,4 @@
+
 use serde::{Deserialize, Serialize};
 
 // Decay constants (per step)
@@ -6,7 +7,7 @@ const CORTISOL_DECAY: f32 = 0.90;
 const ACETYLCHOLINE_DECAY: f32 = 0.99;
 
 /// Neuromodulator system for reward-modulated learning
-#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct NeuroModulators {
     pub dopamine: f32,
     pub cortisol: f32,
