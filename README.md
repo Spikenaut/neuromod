@@ -1,24 +1,74 @@
-# Neuromod - Reward-Modulated Spiking Neural Networks
+# Neuromod — Pure Neuromorphic Research Library
 
 [![Crates.io](https://img.shields.io/crates/v/neuromod.svg)](https://crates.io/crates/neuromod)
 [![Docs.rs](https://img.shields.io/badge/docs.rs-neuromod-blue.svg)](https://docs.rs/neuromod)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL_3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub](https://img.shields.io/badge/GitHub-rmems/neuromod-black.svg)](https://github.com/rmems/neuromod)
+[![GitHub](https://img.shields.io/badge/GitHub-Spikenaut/neuromod-black.svg)](https://github.com/Spikenaut/neuromod)
 
-**v0.3.0** — Now with the four Godfathers of Neuroscience.
+**v0.3.0 — Neuroscience Foundation**
 
-A lightweight, zero-unsafe Rust crate for neuromorphic computing. Designed as the official Rust backend for **Spikenaut-v2** — the 16-channel neuromorphic HFT + FPGA system.
+A lightweight, zero-unsafe Rust crate for neuromorphic computing, focused on **Med-Tech research** and **hardware-aware AI**. `neuromod` provides a biologically grounded Spiking Neural Network (SNN) engine designed for rigorous scientific experimentation, embedded deployment on reconfigurable hardware, and future Brain-Computer Interface (BCI) research.
+
+Optimised for high-performance execution on **Fedora 43 (Ship of Theseus)** workstations and bare-metal FPGA targets.
+
+---
+
+## Vision
+
+> *The lion does not compromise fidelity for convenience.*
+
+`neuromod` is built on a philosophy of **sovereign, high-fidelity engineering** — every neuron model, every plasticity rule, and every hardware export honours the precision demanded by both neuroscience and systems engineering. There are no shortcuts: the mathematics are correct, the memory footprint is minimal, and the abstractions are thin enough to run on bare metal.
+
+This library is intended as a research-grade foundation for the EE and biomedical engineering community — from cortical dynamics simulation to closed-loop neuroprosthetic control.
+
+---
 
 ## Features
 
-- **Five neuron models**: Lapicque (1907), LIF, Hodgkin-Huxley (1952), FitzHugh-Nagumo (1961), Izhikevich (2003)
-- Reward-modulated STDP learning
-- Classical Hebbian STDP (unmodulated, honoring Hebb 1949)
-- Full neuromodulator system (dopamine, cortisol, acetylcholine, tempo, **mining_dopamine**)
+- **Five canonical neuron models**: Lapicque (1907), LIF, Hodgkin-Huxley (1952), FitzHugh-Nagumo (1961), Izhikevich (2003)
+- Reward-Modulated STDP (R-STDP) learning
+- Classical Hebbian STDP (unmodulated, honouring Hebb 1949)
+- Full neuromodulator system (dopamine, cortisol, acetylcholine, tempo)
 - Sub-1 µs modulator updates
-- ~1.6 KB memory footprint
-- no_std + Q8.8 fixed-point FPGA .mem export ready
-- jlrs zero-copy interop for Julia training
+- ~1.6 KB memory footprint for the full 16-channel network
+- `no_std` + Q8.8 fixed-point `.mem` export for FPGA synthesis
+- `jlrs` zero-copy interop for Julia-based offline training pipelines
+
+---
+
+## Core Components
+
+### 16-Channel SNN Bank
+
+The engine operates a **16-channel spiking neuron bank** structured around a coincidence detector and a global inhibitory interneuron. Each channel is independently configurable with any supported neuron model, enabling heterogeneous network topologies for multi-modal sensory encoding, population coding, and closed-loop feedback experiments.
+
+```rust
+use neuromod::{SpikingNetwork, NeuroModulators};
+
+let mut network = SpikingNetwork::new();
+let stimuli = [0.5f32; 16]; // 16-channel sensory input
+let modulators = NeuroModulators::default();
+let spikes = network.step(&stimuli, &modulators);
+```
+
+### Integrated Neuron Models
+
+| Model | Module | Variables | Biological Realism | Primary Use Case |
+|---|---|---|---|---|
+| **Lapicque** — Classic LIF | [`lapicque`](src/lapicque.rs) | 1 | Foundational | Large-scale SNNs, FPGA baseline |
+| **LIF** — Leaky Integrate-and-Fire | [`lif`](src/lif.rs) | 1 | Low–Medium | Hardware-friendly, low-power embedded |
+| **Izhikevich** — Biological Firing Patterns | [`izhikevich`](src/izhikevich.rs) | 2 | Medium–High | Cortical pattern matching, burst detection |
+| **FitzHugh-Nagumo** — Non-linear Oscillators | [`fitzhugh_nagumo`](src/fitzhugh_nagumo.rs) | 2 | Medium | Phase-plane analysis, oscillatory circuits |
+| **Hodgkin-Huxley** — Conductance-Based Dynamics | [`hodgkin_huxley`](src/hodgkin_huxley.rs) | 4 | High | Biophysical simulation, ion-channel studies |
+
+### Plasticity Rules
+
+| Rule | Description |
+|---|---|
+| **Hebbian Baseline STDP** | Unsupervised Hebbian learning — "neurons that fire together, wire together" (Hebb, 1949) |
+| **Reward-Modulated STDP (R-STDP)** | Dopamine-gated synaptic update; links spike timing to behavioural outcome |
+
+---
 
 ## Legends of Neuromorphic Computing
 
@@ -27,39 +77,53 @@ This crate explicitly honours the foundational scientists whose work spans over 
 | Scientist | Year | Module | Contribution |
 |---|---|---|---|
 | **Louis Lapicque** | 1907 | `lapicque` | Original Integrate-and-Fire model |
-| **Alan Hodgkin & Andrew Huxley** | 1952 | `hodgkin_huxley` | Biophysical gold standard with explicit ion channels |
-| **Richard FitzHugh & Jin-ichi Nagumo** | 1961/1962 | `fitzhugh_nagumo` | Classic 2D relaxation oscillator |
 | **Donald O. Hebb** | 1949 | `hebbian` | "Neurons that fire together wire together" |
-| **Eugene Izhikevich** | 2003 | `izhikevich` | Programmable spiking neuron; reproduces cortical patterns |
+| **Alan Hodgkin & Andrew Huxley** | 1952 | `hodgkin_huxley` | Biophysical gold standard with explicit ion channels |
+| **Richard FitzHugh & Jin-ichi Nagumo** | 1961/62 | `fitzhugh_nagumo` | Classic 2D relaxation oscillator |
+| **Eugene Izhikevich** | 2003 | `izhikevich` | Programmable spiking neuron; reproduces 20+ cortical firing patterns |
 
-## Neuron Model Catalog
+---
 
-| Model | Year | Variables | Speed | Biological Realism | Best For |
-|---|---|---|---|---|---|
-| [`LapicqueNeuron`](src/lapicque.rs) | 1907 | 1 | ⚡⚡⚡⚡⚡ | Low | Baseline, educational, massive-scale SNNs |
-| [`LifNeuron`](src/lif.rs) | — | 1 | ⚡⚡⚡⚡⚡ | Low-Medium | Hardware-friendly, low-power deployments |
-| [`FitzHughNagumoNeuron`](src/fitzhugh_nagumo.rs) | 1961 | 2 | ⚡⚡⚡⚡ | Medium | Phase-plane analysis, oscillatory circuits |
-| [`IzhikevichNeuron`](src/izhikevich.rs) | 2003 | 2 | ⚡⚡⚡⚡ | Medium-High | Cortical pattern matching, burst detection |
-| [`HodgkinHuxleyNeuron`](src/hodgkin_huxley.rs) | 1952 | 4 | ⚡⚡ | High | Biophysical simulation, ion-channel studies |
+## Neuron Model Reference
 
-### Hodgkin-Huxley (1952)
+### Hodgkin-Huxley (1952) — Conductance-Based Dynamics
 
 ```rust
 use neuromod::HodgkinHuxleyNeuron;
 
-let mut hh = HodgkinHuxleyNeuron::new();              // squid giant axon (6.3 °C)
-let mut cortical = HodgkinHuxleyNeuron::new_cortical(); // mammalian (37 °C)
+let mut hh = HodgkinHuxleyNeuron::new();               // squid giant axon (6.3 °C)
+let mut cortical = HodgkinHuxleyNeuron::new_cortical(); // mammalian cortex (37 °C)
 let fired = hh.step(10.0, 0.05);  // 10 µA/cm², dt = 50 µs
 ```
 
-### FitzHugh-Nagumo (1961)
+### Izhikevich (2003) — Biological Firing Patterns
+
+```rust
+use neuromod::IzhikevichNeuron;
+
+let mut rs = IzhikevichNeuron::regular_spiking();     // RS cortical excitatory
+let mut ib = IzhikevichNeuron::intrinsically_bursting();
+let fired = rs.step(10.0, 0.25);
+```
+
+### FitzHugh-Nagumo (1961) — Non-linear Oscillators
 
 ```rust
 use neuromod::FitzHughNagumoNeuron;
 
-let mut excitable  = FitzHughNagumoNeuron::new();            // needs input to fire
-let mut oscillator = FitzHughNagumoNeuron::new_oscillatory(); // fires spontaneously
+let mut excitable  = FitzHughNagumoNeuron::new();             // driven excitable regime
+let mut oscillator = FitzHughNagumoNeuron::new_oscillatory(); // spontaneous limit cycle
 let fired = excitable.step(0.7, 0.5);
+```
+
+### Reward-Modulated STDP (R-STDP)
+
+```rust
+use neuromod::{apply_rstdp, StdpParams};
+
+let params = StdpParams::default();
+// dopamine_signal gates the Hebbian update
+let new_w = apply_rstdp(pre_spike_time, post_spike_time, current_weight, dopamine_signal, &params);
 ```
 
 ### Classical Hebbian STDP
@@ -71,64 +135,66 @@ let params = StdpParams::default();
 let new_w = apply_classical_stdp(pre_spike_time, post_spike_time, current_weight, &params);
 ```
 
-## Quick Start
+---
 
-```rust
-use neuromod::{SpikingNetwork, NeuroModulators};
+## Neuromodulator System
 
-let mut network = SpikingNetwork::new();
-let stimuli = [0.5f32; 16]; // 16-channel input
-let modulators = NeuroModulators::default();
-let spikes = network.step(&stimuli, &modulators);
-```
-
-## Architecture
-
-### Neuron Banks (16 channels)
-- 8 bear/bull asset pairs (DNX, QUAI, QUBIC, KASPA, XMR, OCEAN, VERUS + thermal)
-- Coincidence detector + global inhibitor
-
-### Neuromodulator System
-- **Dopamine** – market/sync reward
-- **Cortisol** – stress/inhibition
-- **Acetylcholine** – focus/SNR
-- **Tempo** – clock scaling
-- **mining_dopamine** (v0.2.1) – EMA-smoothed mining efficiency reward
-
-### HftReward Trait
-```rust
-pub trait HftReward {
-    fn sync_bonus(&self) -> f32;
-    fn price_reflex(&self) -> f32;
-    fn thermal_pain(&self) -> f32;
-    fn mining_efficiency_bonus(&self) -> f32;  // new
-}
-```
-
-## Performance
-
-- Latency: **< 1 µs** per step
-- Memory: **~1.6 KB** full network
-- Throughput: > 1M steps/sec on single core
-- FPGA-ready: Q8.8 fixed-point export
-
-## Comparison to Other Neuromorphic Mining Crates
-
-| Crate                  | Focus                              | Mining / Crypto Integration                  | Neuromodulators                  | Hardware / FPGA Support          | Live Telemetry / HFT             | Size / Dependencies          | Unique Strength                          | Verdict vs neuromod v0.2.1 |
-|------------------------|------------------------------------|---------------------------------------------|----------------------------------|----------------------------------|----------------------------------|------------------------------|------------------------------------------|----------------------------|
-| **neuromod (yours)**   | Reward-modulated SNN engine        | **Yes** – `mining_dopamine`, EMA reward, hashrate/power/temp penalties | 7 full (dopamine, cortisol, acetylcholine, tempo, **mining_dopamine**, thermal, market) | Q8.8 .mem export, no_std, Artix-7 ready | Live 16-channel telemetry + ghost-money HFT | ~550 SLoC, zero heavy deps | **Only crate** with mining efficiency as a neuromodulator + FPGA export | **The winner** – literally the only one in this niche |
-| spiking_neural_networks | General biophysical SNN simulator  | None                                        | Basic reward only                | None                             | Simulation only                  | Large, many deps             | High-fidelity neuron models              | No mining, no hardware |
-| omega-snn              | Cognitive SNN architecture         | None                                        | Dopamine + NE + Serotonin + ACh  | None                             | Simulation only                  | Medium                       | Population coding & sparse reps          | Good modulators but no mining/telemetry |
-| neuburn                | GPU training framework (Burn)      | None                                        | None                             | GPU training only                | Training only                    | Medium                       | Spiking LSTM + surrogate gradients       | Pure offline training |
-
-**You own the entire niche** — the only production-ready neuromorphic mining + HFT crate on crates.io.
-
-## Links
-
-- Crates.io: https://crates.io/crates/neuromod
-- Docs: https://docs.rs/neuromod
-- Spikenaut HF Model: https://huggingface.co/rmems/Spikenaut-SNN-v2
+| Modulator | Role |
+|---|---|
+| **Dopamine** | Reward signal; gates R-STDP weight updates |
+| **Cortisol** | Stress-driven inhibition; scales firing thresholds |
+| **Acetylcholine** | Attentional gain; improves signal-to-noise ratio |
+| **Tempo** | Global clock scaling for variable time-step integration |
 
 ---
 
-*Built for Spikenaut-v2 — the lean neuromorphic lion for sovereign crypto nodes and HFT.*
+## Performance
+
+| Metric | Value |
+|---|---|
+| Step latency | **< 1 µs** per network step |
+| Memory footprint | **~1.6 KB** (full 16-channel network) |
+| Throughput | **> 1 M steps/sec** on a single core |
+| FPGA export | Q8.8 fixed-point `.mem` (Xilinx-compatible) |
+| Build target | Fedora 43 (Ship of Theseus) · `x86_64` & `armv7` cross-compilation |
+
+---
+
+## Comparison to Other Neuromorphic Crates
+
+| Crate | Focus | Neuromodulators | Hardware / FPGA | Biological Models | Plasticity |
+|---|---|---|---|---|---|
+| **neuromod** | Pure neuromorphic research | Dopamine, Cortisol, ACh, Tempo | Q8.8 `.mem` export, `no_std`, Artix-7 ready | 5 canonical models | Hebbian + R-STDP |
+| `spiking_neural_networks` | General biophysical simulation | Basic reward only | None | High-fidelity | Limited |
+| `omega-snn` | Cognitive SNN architecture | Dopamine + NE + Serotonin + ACh | None | Population coding | Sparse |
+| `neuburn` | GPU training (Burn framework) | None | GPU training only | Spiking LSTM | Surrogate gradients |
+
+---
+
+## Roadmap
+
+### v0.4.0 — Hardware Integration
+- [ ] **Intel Lava Framework integration** — Python/Rust bridge for execution on Intel Loihi 2 neuromorphic chips via the Lava runtime
+- [ ] **Bare-metal deployment for Digilent Artix-7 FPGAs** — synthesis-ready HDL generation from Q8.8 `.mem` exports; verified on the Digilent Nexys A7-100T board
+
+### v0.5.0 — Neural Bridge & BCI Research
+- [ ] **Neural Bridge** — a low-latency, closed-loop interface layer for Brain-Computer Interface (BCI) research; targets real-time bidirectional communication between decoded neural spike trains and SNN actuator networks
+- [ ] Spike sorting pre-processing pipeline for Utah Array / Neuropixels data ingestion
+- [ ] Hardware-in-the-loop (HIL) validation against recorded cortical datasets
+
+### Beyond
+- [ ] PyO3 Python bindings for notebook-driven experimentation
+- [ ] WASM target for browser-based neural simulation demos
+- [ ] Integration with the [SpiNNaker 2](https://www.humanbrainproject.eu/en/silicon-brains/spinnaker-2/) platform
+
+---
+
+## Links
+
+- Crates.io: <https://crates.io/crates/neuromod>
+- Docs: <https://docs.rs/neuromod>
+- Spikenaut Model Hub: <https://huggingface.co/rmems/Spikenaut-SNN-v2>
+
+---
+
+*`neuromod` — sovereign, high-fidelity neuromorphic engineering. Built to last.*
