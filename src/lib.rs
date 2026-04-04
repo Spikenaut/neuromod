@@ -33,11 +33,11 @@
 //!
 //! let mut network = SpikingNetwork::new();
 //! let stimuli = [0.5f32; 16]; // 16-channel input
-//! let modulatorsf o = NeuroModulators::default();
+//! let modulators = NeuroModulators::default();
 //! // Simulate one step of the network with the given stimuli and modulators
 //! let output = network.step(&stimuli, &modulators);
 //! println!("Neurons that fired: {:?}", output);
-//! ```rust
+//! ```
 pub mod lif;
 pub mod izhikevich;
 pub mod rm_stdp;  // change from 'stdp' to 'rm_stdp' to reflect reward modulation

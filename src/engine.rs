@@ -176,7 +176,7 @@ impl SpikingNetwork {
                 let scale = WEIGHT_BUDGET / total;
                 for w in &mut neuron.weights {
                     *w *= scale;
-                    *w = w.clamp(STDP_W_MIN, STDP_W_MAX);
+                    *w = w.clamp(RM_STDP_W_MIN, RM_STDP_W_MAX);
                 }
             }
         }
@@ -197,25 +197,6 @@ impl SpikingNetwork {
         }
 
         spike_ids
-    }
-
-    /// Returns aggregated bear/bull signal for the current step.
-    ///
-    /// Call immediately after `step()` to get directional sentiment without
-    /// inspecting raw spike index vectors.
-    pub fn bear_bull_signal(&self) -> BearBullSignal {
-        let mut bear_count = 0u8;
-        let mut bull_count = 0u8;
-        for pair in 0..7 {
-            if self.neurons[pair * 2].last_spike     { bear_count += 1; }
-            if self.neurons[pair * 2 + 1].last_spike { bull_count += 1; }
-        }
-        // Count Izhikevich spikes: neuron fired if v was reset this step
-        // (v == c indicates a just-reset state)
-        let iz_count = self.iz_neurons.iter()
-            .filter(|n| (n.v - n.c).abs() < 1e-3)
-            .count() as u8;
-        BearBullSignal { bear_count, bull_count, iz_count }
     }
 
     /// Apply STDP learning rule
@@ -244,13 +225,13 @@ impl SpikingNetwork {
                 let delta_t = (post_time - pre_time) as f32;
 
                 let dw = if delta_t >= 0.0 {
-                    STDP_A_PLUS * (-delta_t / STDP_TAU_PLUS).exp()
+                    RM_STDP_A_PLUS * (-delta_t / RM_STDP_TAU_PLUS).exp()
                 } else {
-                    -STDP_A_MINUS * (delta_t / STDP_TAU_MINUS).exp()
+                    -RM_STDP_A_MINUS * (delta_t / RM_STDP_TAU_MINUS).exp()
                 };
 
                 neuron.weights[ch] = (neuron.weights[ch] + dw * dopamine_lr)
-                    .clamp(STDP_W_MIN, STDP_W_MAX);
+                    .clamp(RM_STDP_W_MIN, RM_STDP_W_MAX);
             }
         }
     }

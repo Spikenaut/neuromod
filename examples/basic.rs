@@ -14,7 +14,7 @@ fn main() {
     println!("✓ Created input stimuli: {:?}", &stimuli);
     
     // Create neuromodulators
-    let modulators = NeuroModulators::new();
+    let modulators = NeuroModulators::default();
     println!("✓ Created neuromodulators: dopamine={:.2}, cortisol={:.2}, ach={:.2}, tempo={:.2}",
              modulators.dopamine, modulators.cortisol, modulators.acetylcholine, modulators.tempo);
     
