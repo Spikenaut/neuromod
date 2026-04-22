@@ -13,6 +13,7 @@ A generalized Rust library for spiking neural networks (SNNs), centered on biolo
 - Canonical neuron models included:
   - Lapicque
   - LIF
+  - GIF (Generalized Integrate-and-Fire)
   - Izhikevich
   - FitzHugh-Nagumo
   - Hodgkin-Huxley
@@ -103,6 +104,7 @@ fn main() {
 - `NeuroModulators`
 - Neuron models:
   - `LifNeuron`
+  - `GifNeuron`
   - `IzhikevichNeuron`
   - `LapicqueNeuron`
   - `FitzHughNagumoNeuron`
