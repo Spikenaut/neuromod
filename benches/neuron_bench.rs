@@ -4,9 +4,9 @@ use neuromod::{LifNeuron, IzhikevichNeuron, LapicqueNeuron, HodgkinHuxleyNeuron,
 /// Benchmark LIF neuron integration
 fn bench_lif_integrate(c: &mut Criterion) {
     let mut neuron = LifNeuron::new();
-    /// Black box to prevent optimization
-    
-    /// Benchmark function
+    // Black box to prevent optimization
+
+    // Benchmark function
     c.bench_function("lif_integrate", |b| {
         b.iter(|| { // Iterate benchmark
             neuron.integrate(black_box(0.5)); // Black box to prevent optimization
@@ -106,7 +106,7 @@ fn bench_neuron_comparison(c: &mut Criterion) {
     group.finish(); // Finish benchmark group
 }
 
-/// Criterion benchmark group
+// Criterion benchmark group
 criterion_group!(
     benches,
     bench_lif_integrate,
